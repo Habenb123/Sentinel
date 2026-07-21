@@ -12,7 +12,7 @@ export default function Contact() {
           </p>
 
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-gray-950 leading-tight">
-            Join QuoraGram
+            Join Sentinel
             <br />
             Ask, Share, Connect!
           </h2>
@@ -31,10 +31,10 @@ export default function Contact() {
             </a>
 
             <a
-              href="mailto:info@quoragram.com"
+              href="mailto:info@sentinel.com"
               className="inline-flex items-center gap-1.5 px-7 py-3 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-white transition-colors duration-200"
             >
-              info@quoragram.com
+              info@sentinel.com
             </a>
           </div>
         </div>

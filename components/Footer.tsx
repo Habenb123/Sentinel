@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <h3 className="text-white text-base font-semibold mb-4">
-              QuoraGram
+              Sentinel
             </h3>
             <p className="text-sm leading-relaxed text-gray-500">
               A safe, moderated social media platform for knowledge sharing and visual posts. No adult content, just community-driven engagement.
@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={14} strokeWidth={1.6} className="shrink-0" />
-                info@quoragram.com
+                info@sentinel.com
               </li>
             </ul>
           </div>
@@ -85,7 +85,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-          <p>© {new Date().getFullYear()} QuoraGram. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Sentinel. All rights reserved.</p>
           <div className="flex gap-6 mt-3 md:mt-0">
             <span className="hover:text-gray-400 cursor-pointer transition-colors">
               Privacy Policy

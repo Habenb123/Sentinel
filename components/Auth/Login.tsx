@@ -22,7 +22,7 @@ export default function Login() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5, ease: "easeOut" }}
 				>
-					<h2 className="text-3xl font-semibold text-gray-950 text-center mb-2">Login to QuoraGram</h2>
+					<h2 className="text-3xl font-semibold text-gray-950 text-center mb-2">Login to Sentinel</h2>
 					<p className="text-sm text-gray-400 text-center mb-8">Access your account to ask questions, share images, and connect with the community.</p>
 					<form onSubmit={handleSubmit} className="space-y-6">
 						<div>

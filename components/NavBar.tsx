@@ -51,7 +51,7 @@ export default function Navbar() {
             className="text-sm font-semibold tracking-tight text-gray-900 whitespace-nowrap"
             style={{ textDecoration: 'none' }}
           >
-            QuoraGram
+            Sentinel
           </a>
           <div className="hidden md:flex items-center gap-6">
             <a

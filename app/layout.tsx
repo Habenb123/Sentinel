@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Identity Collaboration — Enterprise IAM Solutions",
+  title: "Sentinel — Secure AI-Moderated Social Platform",
   description:
-    "Enterprise Identity & Access Management solutions. Structured governance, compliance alignment, and long-term security maturity.",
+    "A safe, privacy-first social platform for knowledge sharing and photo uploads, powered by real-time content moderation AI.",
 };
 
 export default function RootLayout({

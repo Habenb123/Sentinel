@@ -1,111 +1,123 @@
-# Sentinel — Secure AI-Moderated Social Platform
+# Sentinel
 
-Sentinel is a modern social media application where users can share text posts and upload images securely. It features a fully integrated **real-time AI content moderation system** that automatically filters toxic text and NSFW (Not Safe For Work) images before they are posted to the public feed.
+Sentinel is a content moderation system that combines a Next.js web app with a Python (FastAPI) inference service to flag unsafe text and images in real time. It runs a toxic-text classifier and an NSFW image classifier behind a single `/moderate` endpoint, so a submission can be checked for both text and image safety in one call.
 
----
+## Features
 
-## 🌟 Key Features
+- **Text moderation** — a Keras toxicity model (`toxic_text_model.keras`) scores incoming text and flags it when the toxicity score crosses a threshold, with a keyword-based fallback filter if the model fails to load or predict.
+- **Image moderation** — a MobileNet-based NSFW classifier (`nsfw_mobilenet_model.keras`) scores uploaded images across categories (drawing, hentai, neutral, porn, sexy) and flags content above a safety threshold.
+- **Combined `/moderate` endpoint** — accepts text, an image, or both in a single multipart request and returns per-channel scores plus an overall `blocked` verdict with reasons.
+- **Health check endpoint** — `/health` reports whether each model loaded successfully.
+- **Next.js frontend** — a React 19 / Tailwind 4 app (with shadcn/Radix UI components and Framer Motion) for interacting with the moderation service.
 
-*   **Interactive Social Feed**: Browse posts, create new text posts, and upload images with clean animations powered by Framer Motion.
-*   **Real-Time AI Moderation**:
-    *   **Text Toxicity Classification**: Analyzes submissions across 6 categories (`toxic`, `severe_toxic`, `obscene`, `threat`, `insult`, `identity_hate`) using a custom **Bidirectional LSTM** model.
-    *   **NSFW Image Moderation**: Classifies uploaded photos into 5 categories (`drawings`, `hentai`, `neutral`, `porn`, `sexy`) using transfer learning on **MobileNetV2**.
-*   **Dual-Service Architecture**: Next.js App Router for frontend & gateway routing, coupled with a Python FastAPI server for high-performance ML model inference.
-*   **Graceful Offline Fallback**: If the Python FastAPI moderation server goes offline, the Next.js API route seamlessly downgrades to a local regex keyword filter for text and blocks image posts by default to preserve platform safety.
+## Tech stack
 
----
+| Layer | Stack |
+|---|---|
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Radix UI, Framer Motion |
+| Backend | Python, FastAPI, Uvicorn |
+| ML | TensorFlow / Keras (NSFW image classifier, toxic text classifier), NumPy, Pillow |
+| Model development | Jupyter notebooks (`notebooks/`) |
 
-## 🛠️ Tech Stack
+## Project structure
 
-*   **Frontend**: Next.js 15 (App Router), React, TypeScript, Tailwind CSS, Framer Motion, Lucide Icons.
-*   **Backend**: Python 3.10+, FastAPI, Uvicorn.
-*   **Machine Learning**: TensorFlow 2.x, Keras 3, NumPy, Pillow, Scikit-Learn, Pickle.
+```
+Sentinel/
+├── app/                  # Next.js app router pages
+├── components/           # React UI components
+├── lib/                  # Shared frontend utilities
+├── notebooks/            # Model training / experimentation notebooks
+├── public/                # Static assets
+├── moderate_server.py    # FastAPI moderation service (text + image)
+├── tokenizer.pkl          # Serialized tokenizer for the text model
+└── package.json
+```
 
----
+> Note: `moderate_server.py` expects `nsfw_mobilenet_model.keras` and `toxic_text_model.keras` in the parent directory of the script (i.e., the repo root). For your convenience, these pre-trained model files are committed directly to this repository.
 
-## 🧠 Machine Learning Details
-
-### 1. Text Toxicity Classifier
-*   **Model**: [toxic_text_model.keras](file:///c:/Users/HABEN/MY-PROJECTS%202.0/nextjs-template-master/toxic_text_model.keras)
-*   **Dataset**: Trained on Kaggle's Toxic Comment Classification dataset (159,571 comments).
-*   **Architecture**:
-    *   **Embedding Layer**: Projects a 20,000-word vocabulary into a 128-dimensional space.
-    *   **Bidirectional LSTM (64 units)**: Captures sequence dependencies from both directions.
-    *   **Dropout (0.5)**: Applied twice for regularization.
-    *   **Dense Layer (64, ReLU)** -> **Dense Output (6, Sigmoid)**.
-*   **Threshold**: Any category scoring $> 0.5$ triggers a content block.
-
-### 2. Image NSFW Classifier
-*   **Model**: [nsfw_mobilenet_model.keras](file:///c:/Users/HABEN/MY-PROJECTS%202.0/nextjs-template-master/nsfw_mobilenet_model.keras)
-*   **Architecture**:
-    *   **Base Model**: Pretrained `MobileNetV2` (weights frozen).
-    *   **Classification Head**: `GlobalAveragePooling2D()` -> `Dense (128, ReLU)` -> `Dense (5, Softmax)`.
-*   **Safety Score Heuristic**:
-    $$\text{NSFW Score} = \text{hentai} + \text{porn} + (0.5 \times \text{sexy})$$
-    A calculated score $> 0.5$ triggers a content block.
-
----
-
-## 🚀 Getting Started
-
-To run Sentinel locally, you need to start both the Next.js frontend and the FastAPI backend.
+## Getting started
 
 ### Prerequisites
-*   Node.js (v18 or higher)
-*   Python (v3.10 or higher)
 
----
+- Node.js 18+ and a package manager (npm, yarn, pnpm, or bun)
+- Python 3.10+
 
-### Step 1: Set Up & Run the FastAPI Backend
+### 1. Frontend
 
-1. Navigate to the project root directory and create a Python virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/Scripts/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. Install the Python dependencies:
-   ```bash
-   pip install fastapi uvicorn tensorflow keras numpy pillow pydantic
-   ```
-
-3. Start the FastAPI server:
-   ```bash
-   python moderate_server.py
-   ```
-   The backend will run at `http://127.0.0.1:8000`.
-
----
-
-### Step 2: Set Up & Run the Next.js Frontend
-
-1. In a new terminal tab, install the Node.js packages:
-   ```bash
-   npm install
-   ```
-
-2. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-3. Open `http://localhost:3000` in your browser. Go to `http://localhost:3000/explore` to view and test the AI-moderated feed.
-
----
-
-## 📂 Project Structure
-
-```text
-├── app/                  # Next.js App Router (pages and API routes)
-│   ├── api/moderate/     # Next.js API Route (Gateway & Offline Fallback)
-│   └── explore/          # Explore Feed Page
-├── components/           # Reusable React components
-│   ├── SocialFeed/       # Feed UI and Post forms
-│   └── Auth/             # Login & Register views
-├── notebooks/            # Jupyter notebooks for model training
-├── moderate_server.py    # Python FastAPI moderation backend
-├── toxic_text_model.keras# Saved text classifier model
-├── nsfw_mobilenet_model.keras # Saved image classifier model
-├── tokenizer.pkl         # Saved text tokenizer
-└── package.json          # Node dependencies and scripts
+```bash
+npm install
+npm run dev
+# or: yarn dev / pnpm dev / bun dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 2. Moderation backend
+
+```bash
+pip install fastapi uvicorn tensorflow keras numpy pillow python-multipart
+
+python moderate_server.py
+```
+
+This starts the FastAPI service on `http://127.0.0.1:8000` with CORS enabled so the Next.js app can call it directly.
+
+## Model development & training
+
+If you want to retrain or modify the models, you can use the notebooks located in the `notebooks/` directory:
+
+1. Open the relevant notebook in `notebooks/` and run it end-to-end to train and export the model.
+2. Move the resulting `.keras` file to the repo root (same level as `moderate_server.py`).
+
+If a model file is missing or fails to load, the corresponding checks are skipped (a warning is printed) and, for text, a simple keyword-based fallback filter is used instead — so the server still runs, just with reduced moderation coverage.
+
+## API reference
+
+### `GET /health`
+
+Returns model load status:
+
+```json
+{
+  "status": "healthy",
+  "nsfw_model_loaded": true,
+  "toxic_model_loaded": true
+}
+```
+
+### `POST /moderate`
+
+Multipart form request with optional `text` and `image` fields.
+
+```bash
+curl -X POST http://127.0.0.1:8000/moderate \
+  -F "text=some message to check" \
+  -F "image=@/path/to/image.jpg"
+```
+
+Response:
+
+```json
+{
+  "text_safe": true,
+  "text_score": 0.12,
+  "image_safe": true,
+  "image_score": 0.03,
+  "blocked": false,
+  "reason": []
+}
+```
+
+- `blocked` is `true` if either the text or image score exceeds the safety threshold (0.5 by default).
+- `reason` lists human-readable explanations for any flagged content.
+
+## Roadmap ideas
+
+- [ ] Bundle model download/setup into a script
+- [ ] Configurable moderation thresholds via environment variables
+- [ ] Dockerize the FastAPI service
+- [ ] Expand the fallback text filter / add multilingual support
+
+## License
+
+No license specified yet — add one (e.g., MIT) if you plan to open this up for contributions.

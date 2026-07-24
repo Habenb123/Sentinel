@@ -89,6 +89,16 @@ def load_models():
 def startup_event():
     load_models()
 
+@app.get("/")
+def read_root():
+    return {
+        "message": "Sentinel Content Moderation Service API is running.",
+        "endpoints": {
+            "health": "/health",
+            "moderate": "/moderate [POST]"
+        }
+    }
+
 @app.get("/health")
 def health():
     return {

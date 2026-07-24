@@ -11,10 +11,15 @@ from PIL import Image
 # Initialize FastAPI app
 app = FastAPI(title="Content Moderation Service")
 
-# Enable CORS so Next.js frontend can call it directly if needed
+# Enable CORS so Next.js frontend can call it directly (restricted origins)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://sentinel-9jymmbju1-donut9.vercel.app",
+        "https://sentinel-dusky-alpha.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

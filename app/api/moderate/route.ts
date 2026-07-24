@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
 
     try {
       // Forward the request to the FastAPI moderation backend
-      const response = await fetch("http://127.0.0.1:8000/moderate", {
+      const backendUrl = process.env.MODERATION_API_URL || "http://127.0.0.1:8000/moderate";
+      const response = await fetch(backendUrl, {
         method: "POST",
         body: pythonFormData,
       });

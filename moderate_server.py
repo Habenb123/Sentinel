@@ -24,9 +24,22 @@ app.add_middleware(
 nsfw_model = None
 toxic_model = None
 
-# Model paths (relative to workspace)
-NSFW_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "nsfw_mobilenet_model.keras"))
-TOXIC_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "toxic_text_model.keras"))
+# Model paths (relative to workspace, with environment variable support)
+NSFW_MODEL_PATH = os.getenv(
+    "NSFW_MODEL_PATH",
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "nsfw_mobilenet_model.keras"))
+)
+if not os.path.exists(NSFW_MODEL_PATH):
+    # Fallback to parent directory just in case
+    NSFW_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "nsfw_mobilenet_model.keras"))
+
+TOXIC_MODEL_PATH = os.getenv(
+    "TOXIC_MODEL_PATH",
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "toxic_text_model.keras"))
+)
+if not os.path.exists(TOXIC_MODEL_PATH):
+    # Fallback to parent directory just in case
+    TOXIC_MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "toxic_text_model.keras"))
 
 print(f"Target NSFW model path: {NSFW_MODEL_PATH}")
 print(f"Target Toxic model path: {TOXIC_MODEL_PATH}")

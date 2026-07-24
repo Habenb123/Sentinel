@@ -1,0 +1,37 @@
+# Use a lightweight Python base image
+FROM python:3.10-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PORT=8000 \
+    NSFW_MODEL_PATH="/app/nsfw_mobilenet_model.keras" \
+    TOXIC_MODEL_PATH="/app/toxic_text_model.keras"
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies needed for Pillow and TensorFlow
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies (using tensorflow-cpu to reduce image size significantly)
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn \
+    tensorflow-cpu \
+    keras \
+    numpy \
+    pillow \
+    python-multipart
+
+# Copy service file and pre-trained models
+COPY moderate_server.py /app/
+COPY nsfw_mobilenet_model.keras /app/
+COPY toxic_text_model.keras /app/
+
+# Expose the API port
+EXPOSE 8000
+
+# Start the FastAPI server using Uvicorn
+CMD ["sh", "-c", "uvicorn moderate_server:app --host 0.0.0.0 --port ${PORT}"]

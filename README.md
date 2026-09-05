@@ -6,8 +6,6 @@ The system uses Natural Language Processing (NLP) for toxicity detection in text
 
 The goal of Sentinel is to provide an automated, scalable, and user-friendly approach to content moderation, helping online platforms create a safer digital environment.
 
-LIVE LINK : https://sentinel-9jymmbju1-donut9.vercel.app/
-
 ## Features
 
 - **Text moderation** — a Keras toxicity model (`toxic_text_model.keras`) scores incoming text and flags it when the toxicity score crosses a threshold, with a keyword-based fallback filter if the model fails to load or predict.

@@ -1,6 +1,10 @@
 # Sentinel
 
-Sentinel is a content moderation system that combines a Next.js web app with a Python (FastAPI) inference service to flag unsafe text and images in real time. It runs a toxic-text classifier and an NSFW image classifier behind a single `/moderate` endpoint, so a submission can be checked for both text and image safety in one call.
+Sentinel is an AI-powered content moderation system designed to automatically detect and flag harmful content across text and images.
+
+The system uses Natural Language Processing (NLP) for toxicity detection in text and a CNN-based deep learning model for detecting unsafe or explicit images. It is built as a full-stack application using Next.js for the frontend and FastAPI for the backend.
+
+The goal of Sentinel is to provide an automated, scalable, and user-friendly approach to content moderation, helping online platforms create a safer digital environment.
 
 ## Features
 
